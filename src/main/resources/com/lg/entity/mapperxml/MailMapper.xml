@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MailMapper">
+    <resultMap id="MailMap" type="Mail">
+        <id property="id" column="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+        <result column="web_id" property="webId" />
+        <result column="mail" property="mail" />
+        <result column="use_for" property="useFor" />
+    </resultMap>
+
+    <sql id="fields">
+        id,create_time,modify_time,web_id,mail,use_for
+    </sql>
+
+    <sql id="field_value">
+        null,now(),now(),#{webId},#{mail},#{useFor}
+    </sql>
+
+    <insert id="insertMail" parameterType="Mail" keyProperty="id" useGeneratedKeys="true">
+        insert INTO mail (<include refid="fields"/>) VALUES (<include refid="field_value"/>)
+    </insert>
+
+    <delete id="deleteMail" parameterType="Mail">
+        DELETE FROM mail WHERE id = #{id}
+    </delete>
+
+    <update id="updateMail" parameterType="Mail">
+        UPDATE mail
+        <set>
+            <if test="web_id != null ">
+                set web_id = #{webId}
+            </if>
+            <if test="mail != null">
+                mail = #{mail}
+            </if>
+            <if test="use_for != null">
+                use_for = #{useFor}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectMailList" resultMap="MailMap">
+        SELECT <include refid="fields"/> FROM mail
+    </select>
+
+    <select id="selectMailById" resultMap="MailMap" parameterType="Mail">
+        SELECT <include refid="fields"/> FROM mail WHERE id = #{id}
+    </select>
+
+</mapper>
